@@ -87,26 +87,7 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
     
-    - name: Modify Config for EXT4 and larger RootFS 🎯
-      run: |
-        cd openwrt
-        echo "Modifying OpenWrt .config for EXT4 and larger RootFS..."
-        
-        # 1. 禁用 SquashFS 根文件系统
-        sed -i 's/CONFIG_TARGET_ROOTFS_SQUASHFS=y/# CONFIG_TARGET_ROOTFS_SQUASHFS is not set/' .config
-        
-        # 2. 启用 EXT4 根文件系统
-        # 确保 CONFIG_TARGET_ROOTFS_EXT4FS=y 被设置
-        sed -i '/CONFIG_TARGET_IMAGES_GZIP=y/a CONFIG_TARGET_ROOTFS_EXT4FS=y' .config
-        
-        # 3. 增大根文件系统分区大小 (例如设置为 512MB)
-        # 这对于 EXT4 镜像很重要，可以提供更大的初始可用空间。
-        sed -i 's/CONFIG_TARGET_ROOTFS_PARTSIZE=.*/CONFIG_TARGET_ROOTFS_PARTSIZE=512/' .config
-        
-        # 4. 重新运行 defconfig 以应用更改并清理配置（很重要）
-        make defconfig
-        echo "Configuration modification complete."
-    
+
     - name: Compile the firmware
       id: compile
       run: |
